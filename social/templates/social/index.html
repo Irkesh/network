@@ -1,0 +1,48 @@
+{% extends "./base.html" %}
+
+{% block content %}
+
+
+    {% if user.is_authenticated %}
+    <div>
+    <h2>{{ user.username }} status</h2>
+
+    {% for update in status_updates %}
+    <div class="status-update">
+        <p>{{ update.content }}</p>
+        <small>{{ update.user.username }} - {{ update.created_at }}</small>
+    </div>
+    {% empty %}
+        <p>here is going to be status of {{ user.username }}</p>    
+    {% endfor %}
+   
+    <button id="statusUpdate" class="edit-button"></button>
+    
+
+    <h2>{{ user.username }} media</h2>
+    <p>Media files of {{ user.username}}:</p>
+
+
+    <ul class="image-list">
+        {% for image in user_images %}
+            <li class="image-item">
+                <img src="{{ image.image.url }}" alt="{{ image.name }}" class="scaled-image">
+            </li>
+        {% empty %}
+            <li>
+                <p>Currently, the user has no media files.</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+    </div>
+    {% else %}
+    <div>
+    <h2>Please login on order to get access</h2>
+    </div>
+    {% endif %}
+    
+    
+   
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "./base.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <h1>Search for new friends</h1>
+    <table>
+      <tr><th>People Around:</th></tr>
+      {% for appuser in appusers %}
+      <tr>
+          {% if appuser.user != user%}
+          <td><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="40px" height="40px"></td>
+          <td>{{appuser.user.username}}</td> 
+          <td>{{appuser.organisation}}</td>
+          <td><button type="button">Add</button></td>
+          {%endif %}
+      </tr>   
+      {% endfor %}
+    </table>
+{% endblock %}

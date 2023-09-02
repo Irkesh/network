@@ -1,0 +1,23 @@
+{% extends "./base.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+        <h1>Register</h1>
+
+        {% if registered %}
+        <strong>Thank you for registering</strong>
+        {% else %}
+        <strong>Register here:</strong><br />
+
+        <form id="user_form" method="post" action=""
+            enctype="multipart/form-data">
+            #cross-side form validation token
+            {% csrf_token %}
+
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+
+            <input type="submit" name="submit" value="Register" />
+        </form>
+        {% endif %}
+{% endblock %}

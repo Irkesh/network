@@ -1,0 +1,41 @@
+{% include "./header.html" %}
+{% include "./title.html" %}
+
+<div class="container-fluid">
+<div class="row">
+
+{% block geneList %}
+<div class="col-4" >
+  <table>
+    <tr><th><a href = '../'> My page </a></th></tr>  
+    <tr><th><a href = 'list_friends/'> My Friends </a></th></tr>  
+    <tr><th><a href = 'search_friends/'> Search Friends </a></th></tr>  
+    <tr><th><a href = 'upload_media/'> Upload Media </a></th></tr> 
+
+  </table>  
+</div>
+<div>
+{% if user.is_authenticated %}
+    
+      <table>
+        <tr><th>User INFO</th></tr>  
+        <tr><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="100px" height="100px"> </tr>
+        <tr><td>Username:</td><td>{{ user.username }}</td></tr> 
+        <tr><td>Email:</td><td>{{ user.email }}</td></tr> 
+        <tr><td>Company: </td><td> {{ appuser.profile.organisation }}</td></tr> 
+      </table>  
+    
+{% endif %}
+</div>
+{% endblock%}
+
+
+
+<div  class="col-8" class="content">
+  {% block content %}Didn't render content{% endblock %}
+</div>
+</div>
+
+</div>
+
+{% include "./footer.html" %}

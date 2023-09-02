@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Netwerk-S website">
+    <meta name="keywords" content="HTML,advanced,web,development">
+    <meta name="author" content="I.Sheresh">
+
+    <link rel="stylesheet" type="text/css" href="../static/css/social.css">
+          
+    <script>
+        function exampleFunction() {
+      var x, y, z;
+      x = 5;
+      y = 6.6;
+      z = "hello";
+      x = x + y * 2;
+      // alert(x);
+      console.log(z);
+      var test_array = [1,2,3];
+      var test_hash = {"one": 2, "two": 'this'};
+      while(true){
+        console.log("while loop");
+        break;
+      };
+      for (i = 0; i < test_array.length; i++) {
+        console.log("array out: "+test_array[i]);
+      }
+      if(test_array.length === 3)
+      {
+        console.log("array is the right length");
+      }
+      test_array.forEach(function(element){
+         console.log("For Each Output: "+element)
+      });
+      }
+      //exampleFunction();
+    
+
+    setInterval(function() {
+        console.log("Hey");
+        const req = new XMLHttpRequest();
+        req.onreadystatechange = function(){
+            if (req.readyState === 4) {
+            console.log("Got Data")
+            html = "<table><tr>";
+            data = JSON.parse(req.response)
+            data.forEach(function(obj)
+            { html += "<td>"+obj.name+"<br />";
+            html += "<img src=\""+obj.image+"\"></td>" });
+            html += "</tr></table>";
+            document.getElementById("images").innerHTML = html;
+            }
+        };
+        req.open("GET", "/api/images/");
+        req.send();
+        }, 5000);
+
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md sticky-top flex-column">
+        <div class="w-100 d-flex">
+          <div class="navbar-header" id="header">               
+            <h1 id="application_title"> Netwerk - S </h1></h2>
+          </div>
+        </div>
+      
+        <div class="w-100 d-flex">
+         <ul class="navbar-nav mr-auto" id="navigation">
+            <li class="nav-item active">
+             <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+             </li>       
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item active">
+            <a class="nav-link" href="#"> : Hello {{ user.username }} <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="../logout"> Logout<span class="sr-only">(current)</span></a>
+          </li>
+          {% else %}
+          <li class="nav-item active">
+            <a class="nav-link" href="../register"> Register <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+          <a class="nav-link" href="../login"> Log In <span class="sr-only">(current)</span></a>
+          </li>
+          {% endif %}
+         </ul>
+         </div>
+      </nav>
+    <div id="images"></div>
+    <div id="input">
+    <form action="/api/image/" method="post" class="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br><br>
+    <label for="image">Upload Image:</label><br>
+    <input type="file" id="image" name="image"><br><br>
+    <input type="submit" value="Submit">
+    </form>
+    </div>
+</body>
+</html>
