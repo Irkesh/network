@@ -5,18 +5,18 @@
 
     {% if user.is_authenticated %}
     <div>
-    <h2>{{ user.username }} status</h2>
+    <h2>{{ user.username }} status <a href="status_update/"><button id="statusUpdate" class="edit-button" ></button></a> </h2>
 
     {% for update in status_updates %}
     <div class="status-update">
-        <p>{{ update.content }}</p>
-        <small>{{ update.user.username }} - {{ update.created_at }}</small>
+        <p>{{ update.content }} <small>{{ update.created_at }}</small></p>
+        
     </div>
     {% empty %}
         <p>here is going to be status of {{ user.username }}</p>    
     {% endfor %}
    
-    <button id="statusUpdate" class="edit-button"></button>
+    
     
 
     <h2>{{ user.username }} media</h2>

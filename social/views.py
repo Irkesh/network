@@ -10,7 +10,8 @@ from django.views.generic.edit import UpdateView
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.contrib.auth import logout
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 
 def room(request, room_name):
     return render(request, 'social/room.html', {'room_name': room_name })
@@ -32,7 +33,7 @@ def user_logout(request):
 
 #handling form that receives username and password
 def user_login(request):
-    master_genes = Gene.objects.all()
+    
 
     #if getting HTTP POST - handle form, if not - return login form
     if request.method == 'POST':
@@ -51,7 +52,7 @@ def user_login(request):
         else:
             return HttpResponse("Invalid login details supplied.")
     else:
-        return render(request, 'social/login.html', {'master_genes': master_genes})
+        return render(request, 'social/login.html')
 
 
 def register(request):
@@ -98,7 +99,8 @@ def index(request):
     user = request.user
     # Query the Image model for images with user_id matching the current user's pk
     user_images = Image.objects.filter(user_id=user.pk)
-    return render(request, 'social/index.html', {'user_images': user_images})
+    status_updates = Status.objects.filter(user_id = user.pk).order_by('-created_at')[:3]
+    return render(request, 'social/index.html', {'user_images': user_images, 'status_updates': status_updates})
 
 
 
@@ -141,6 +143,8 @@ def user_images(request):
     # Pass the user_images queryset to the template for rendering
     return render(request, '../', {'user_images': user_images})
 
+
+
 def user_upload_media(request):
 
     if request.method == 'POST':
@@ -158,13 +162,44 @@ def user_upload_media(request):
 
 def create_status_update(request):
     if request.method == 'POST':
-        form = StatusUpdate(request.POST, request.FILES)
+        form = StatusUpdateForm(request.POST)
         if form.is_valid():
             new_status = form.save(commit=False)
             new_status.user = AppUser.objects.get(user=request.user)            
             new_status.save()
             return HttpResponseRedirect('../')
     else:
-        form = ImageUploadForm()
+        form = StatusUpdateForm()
 
-    return render(request, 'social/upload_image.html')
+    return render(request, 'social/update_status.html')
+
+
+
+
+
+@login_required
+def send_friend_request(request, user_id):
+    # Get the user to whom the friend request is being sent
+    to_user = get_object_or_404(User, pk=user_id)
+
+    # Check if a friendship request already exists
+    existing_request = Friendship.objects.filter(from_user=request.user, to_user=to_user).exists()
+
+    # Check if the user is trying to send a friend request to themselves
+    if request.user == to_user:
+        # Handle the case where a user is trying to friend themselves
+        # You can return an error message or redirect to an appropriate page
+        pass
+
+    # Check if a friendship request already exists
+    elif existing_request:
+        # Handle the case where a user is trying to send a duplicate request
+        # You can return an error message or redirect to an appropriate page
+        pass
+
+    else:
+        # Create a new friendship request
+        Friendship.objects.create(from_user=request.user, to_user=to_user)
+
+    # Redirect to a success or profile page
+    return redirect('user_profile', user_id=user_id)  # Redirect to the user's profile page

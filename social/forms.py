@@ -44,5 +44,5 @@ class ImageUploadForm(forms.ModelForm):
 
 class StatusUpdateForm(forms.ModelForm):
     class Meta:
-        model = StatusUpdate
+        model = Status
         fields = ['content']

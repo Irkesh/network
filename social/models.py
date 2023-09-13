@@ -37,8 +37,8 @@ class Image(models.Model):
     def __str__(self):
         return self.name
 
-class StatusUpdate(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Status(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
