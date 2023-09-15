@@ -2,17 +2,75 @@
 {% load bootstrap4 %}
 
 {% block content %}
-    <h1>Friends List </h1>
+<h1>Friends List </h1>
+  {% if not pending_friend_invitations.empty %}    
+      <div class="friend-block">
+      <table>
+        <tr><th>Incoming friendship requests:</th></tr>
+        {% for pending_friend in pending_friend_invitations %}
+        <tr>
+            {% if pending_friend.user != user%}
+            <td><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="40px" height="40px"></td>
+            <td>{{pending_friend.user.username}}</td> 
+            <td>{{pending_friend.organisation}}</td>                  
+            <td>
+              <form method="post" action="{% url 'accept_friend_request' pending_friend.id %}">
+                  {% csrf_token %}
+                  <input type="submit" value="Confirm">
+              </form>
+          </td>
+          <td>
+            <form method="post" action="{% url 'decline_friend_request' pending_friend.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Decline">
+            </form>
+          </td>
+            
+            {%endif %}
+        </tr>   
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+    
+
+    {% if not pending_friend_requests.empty %}    
+    <div class="friend-block">
     <table>
-      <tr><th>Your Friends:</th></tr>
-      {% for appuser in appusers %}
+      <tr><th>Outgoing friendship requests:</th></tr>
+      {% for pending_friend in pending_friend_requests %}
       <tr>
-          {% if appuser.user != user%}
+          {% if pending_friend.user != user%}
           <td><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="40px" height="40px"></td>
-          <td>{{appuser.user.username}}</td> 
-          <td>{{appuser.organisation}}</td>   
+          <td>{{pending_friend.user.username}}</td> 
+          <td>{{pending_friend.organisation}}</td>               
+          <td>
+            <form method="post" action="{% url 'cancel_friend_request' pending_friend.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Cancel">
+            </form>
+          </td>
+          {%endif %}
+      </tr>   
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+
+    
+    {% if not friends.empty %}
+  <div class="friend-block">
+    <table>
+      <tr><th>User Friends List:</th></tr>
+      {% for friend in friends %}
+      <tr>
+          {% if friend.user != user%}
+          <td><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="40px" height="40px"></td>
+          <td>{{friend.user.username}}</td> 
+          <td>{{friend.organisation}}</td>   
           <td>Chat: </td>       
-          <td><input id="room-name-input" value= {{appuser.user.username}}_{{user.username}}></td>
+          <td><input id="room-name-input" value= {{friend.user.username}}_{{user.username}}></td>
           <td><input id="room-name-submit" type="button" value="Enter"></td>
           {%endif %}
       </tr>   
@@ -29,6 +87,10 @@
             window.location.pathname = '/' + roomName + '/';
         };
       </script>  
-
     </table>
+  </div>
+    {% else %}
+    <p>You have no friends to display.</p>
+    {% endif %}
+
 {% endblock %}

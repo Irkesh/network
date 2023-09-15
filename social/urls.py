@@ -3,6 +3,7 @@ from . import views
 from . import api
 
 
+
 urlpatterns = [
     #path('', views.GeneList.as_view(), name='index'),
     path('', views.index, name='index'),
@@ -17,4 +18,9 @@ urlpatterns = [
     path('api/image/', api.ImageDetail.as_view(), name="image_api"),
     path('api/images/', api.ImageList.as_view(), name="image_api"),
     path('<str:room_name>/', views.room, name='room'),
+    path('send_friend_request/<int:receiver_id>/', views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/<int:sender_id>/', views.accept_friend_request, name='accept_friend_request'),
+    path('decline_friend_request/<int:friend_id>/', views.decline_friend_request, name='decline_friend_request'),
+    path('cancel_friend_request/<int:friend_id>/', views.cancel_friend_request, name='cancel_friend_request'),
 ]
+

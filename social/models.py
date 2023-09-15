@@ -46,9 +46,14 @@ class Status(models.Model):
         return f"{self.user.username}'s Status Update"
 
 
-class FriendsLink(models.Model):
     
-    from_user = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, related_name='friend_requests_sent')
-    to_user = models.ForeignKey(AppUser, on_delete=models.DO_NOTHING, related_name='friend_requests_received')
+class Friendship(models.Model):
+    sender = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='sent_friend_requests')
+    receiver = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='received_friend_requests')
+    status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('accepted', 'Accepted')])
     established_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender} to {self.receiver}: {self.status}"
+    
    

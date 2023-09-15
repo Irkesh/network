@@ -11,7 +11,12 @@
           <td><img src="../static/media/user_placeholder.jpg" alt="Avatar" width="40px" height="40px"></td>
           <td>{{appuser.user.username}}</td> 
           <td>{{appuser.organisation}}</td>
-          <td><button type="button">Add</button></td>
+          <td>
+            <form method="post" action="{% url 'send_friend_request' appuser.user.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Add">
+            </form>
+          </td>          
           {%endif %}
       </tr>   
       {% endfor %}
