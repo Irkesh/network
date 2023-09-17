@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils import timezone
 
+
 class AppUser(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)    
@@ -12,15 +13,6 @@ class AppUser(models.Model):
     organisation = models.CharField(max_length=256, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True)
     friends = models.ManyToManyField('self', blank=True, symmetrical=False)
-
-    def send_friend_request(self, to_user):
-        FriendsLink.objects.create(from_user=self, to_user=to_user)
-    
-    def accept_friend_request(self, from_user):
-        friends_link = FriendsLink.objects.get(from_user=from_user, to_user=self)
-        friends_link.delete()  # You might want to modify this logic based on your needs
-        self.friends.add(from_user)
-        from_user.friends.add(self)
 
     def get_user_id(self):
         return self.user.pk
@@ -43,7 +35,7 @@ class Status(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Status Update"
+        return f"{self.user}'s Status Update"
 
 
     
