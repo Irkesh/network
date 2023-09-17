@@ -46,3 +46,8 @@ class StatusUpdateForm(forms.ModelForm):
     class Meta:
         model = Status
         fields = ['content']
+
+
+class UserSearchForm(forms.Form):
+    friend_name = forms.CharField(max_length=100, required=False)
+    # Add additional search filters as needed

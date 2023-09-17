@@ -99,11 +99,11 @@ def SPA(request):
 def index(request):
     # Get the currently logged-in user
     user = request.user
-    app_user = AppUser.objects.get(id=request.user.id)
+    #app_user = AppUser.objects.get(id=request.user.id)
     # Query the Image model for images with user_id matching the current user's pk
     user_images = Image.objects.filter(user_id=user.pk)
     status_updates = Status.objects.filter(user_id = user.pk).order_by('-created_at')[:3]
-    return render(request, 'social/index.html', {'user_images': user_images, 'status_updates': status_updates, 'app_user': app_user})
+    return render(request, 'social/index.html', {'user_images': user_images, 'status_updates': status_updates})
 
 
 
@@ -119,15 +119,15 @@ class AppUserDetail(DetailView):
 
 
 def appUserList(request):
+    search_users=[]
     current_user_id = request.user.id
-
     #Use Q objects to create a complex OR condition
     friendships = Friendship.objects.filter(
         Q(sender_id=current_user_id, status__iexact="accepted") |
         Q(receiver_id=current_user_id, status__iexact="accepted")
     )
 
-     # Extract the IDs of users who are not the current user
+    # Extract the IDs of users who are not the current user
     other_user_ids = []
     for friendship in friendships:
         if friendship.sender_id != current_user_id:
@@ -138,11 +138,32 @@ def appUserList(request):
     # Remove duplicates from the list of IDs
     other_user_ids = list(set(other_user_ids))
 
-    # Retrieve the relevant AppUser objects
-    appUsers = AppUser.objects.exclude(id__in=other_user_ids)[:12]
+    
+
+    # Handle form submission
+    if request.method == 'POST':
+        form = UserSearchForm(request.POST)
+        if form.is_valid():
+            friend_name = form.cleaned_data['friend_name']
+            # Create a queryset based on the search criteria
+            users = User.objects.filter(username__icontains=friend_name)
+            # Extract the User instances from the queryset
+            user_instances = users.all()  # or users.iterator() for memory-efficient retrieval
+            # Use the User instances to fetch the corresponding AppUser instances
+            appUsers = AppUser.objects.filter(user__in=user_instances)
+
+        else:
+            #users = AppUser.objects.all()  # Display all users if the form is not submitted
+            # Retrieve the relevant AppUser objects
+            appUsers = AppUser.objects.exclude(id__in=other_user_ids)[:12]
+    else:
+        form = UserSearchForm()
+        #users = AppUser.objects.all()  # Display all users if the form is not submitted
+        # Retrieve the relevant AppUser objects
+        appUsers = AppUser.objects.exclude(id__in=other_user_ids)[:12]       
 
     #appUsers = AppUser.objects.exclude(id=current_user_id).filter()    
-    return render(request, 'social/search_friends.html', {'appusers': appUsers, 'type': 'appUserList'})
+    return render(request, 'social/search_friends.html', {'appusers': appUsers, 'search_users': search_users})
 
 
 

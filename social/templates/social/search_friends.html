@@ -1,8 +1,26 @@
 {% extends "./base.html" %}
 {% load bootstrap4 %}
 
-{% block content %}
-    <h1>Search for new friends</h1>
+{% block content %}   
+    
+    <h1>User Search</h1>
+    <form  method="POST"  enctype="multipart/form-data">
+      {% csrf_token %} 
+      <label for="friend_name">Name:</label><br>
+      <input type="text" id="friend_name" name="friend_name"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  
+    {% if not search_users.empty %}    
+    <h2>Search Results</h2>
+    <ul>
+        {% for user in users %}
+        <li>{{ user.username }}</li>
+        <!-- Add additional user information as needed -->
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <table>
       <tr><th>People Around:</th></tr>
       {% for appuser in appusers %}
